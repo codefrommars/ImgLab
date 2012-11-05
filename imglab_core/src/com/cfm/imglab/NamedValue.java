@@ -4,8 +4,7 @@ package com.cfm.imglab;
 public class NamedValue {
 	private String name;
 	private Object value;
-	
-	
+
 	public static final int TYPE_UNDEFINED 	= 0,
 							TYPE_IMAGE 		= 1, 
 							TYPE_NUMBER 	= 2,

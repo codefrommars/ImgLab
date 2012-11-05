@@ -69,11 +69,11 @@ public class Graph {
 		
 		while( nodesToVisit.size() > 0){
 			Node node = nodesToVisit.removeFirst();
-			
+
 			if( node instanceof FilterNode ){
 				program.pushInstruction(new RunNodeInstruction((FilterNode)node));
 			}
-			
+
 			if( node instanceof ExecutableNode ){
 				program.pushInstruction(new ExecutableNodeInstruction( (ExecutableNode)node));
 			}
