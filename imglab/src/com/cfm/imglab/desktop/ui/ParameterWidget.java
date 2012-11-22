@@ -2,7 +2,8 @@ package com.cfm.imglab.desktop.ui;
 
 import javax.swing.JPanel;
 
-import com.cfm.imglab.NamedValue;
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.desktop.ImgLabFrame;
 
 @SuppressWarnings("serial")
@@ -10,7 +11,7 @@ public abstract class ParameterWidget extends JPanel{
 	
 	protected ImgLabFrame frame;
 	private String name;
-	protected NamedValue value;
+	protected RuntimePrimitive value;
 	
 	public ParameterWidget(String name, ImgLabFrame frame) {
 		this.frame = frame;
@@ -25,11 +26,11 @@ public abstract class ParameterWidget extends JPanel{
 //		this.name = name;
 //	}
 	
-	public NamedValue pullValue(){
+	public RuntimePrimitive pullValue(){
 		return value;
 	}
 
-	public void pushValue(NamedValue value) {
+	public void pushValue(RuntimePrimitive value) {
 		this.value = value;
 	}
 }

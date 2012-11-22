@@ -3,10 +3,9 @@ package com.cfm.imglab.desktop.ui.composer.graphic;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import com.cfm.imglab.composer.InputPort;
-import com.cfm.imglab.composer.Link;
-import com.cfm.imglab.composer.OutputPort;
-import com.cfm.imglab.composer.Port;
+import cfm.neograph.core.Graph;
+import cfm.neograph.core.GraphLink;
+import cfm.neograph.core.GraphPort;
 
 
 public class LinkView {
@@ -46,17 +45,21 @@ public class LinkView {
 		this.color = color;
 	}
 	
-	public Link getLink(){
+	public GraphLink getLink(){
 		
-		Port p1 = source.getPort();
-		Port p2 = target.getPort();
+		GraphPort p1 = source.getPort();
+		GraphPort p2 = target.getPort();
 		
-		if( p1 instanceof OutputPort ){
+		if( !source.isInput() ){
 			p1 = target.getPort();
 			p2 = source.getPort();
 		}
 		
-		return new Link((OutputPort)p2, (InputPort)p1);
+		GraphLink l = new GraphLink();
+		l.setSource(p1.getIndex());
+		l.setSource(p2.getIndex());
+		
+		return l;
 	}
 	
 }

@@ -4,10 +4,8 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cfm.imglab.composer.ExecutableNode;
-import com.cfm.imglab.composer.FilterNode;
-import com.cfm.imglab.composer.Graph;
-import com.cfm.imglab.composer.ValueNode;
+import cfm.neograph.core.Graph;
+import cfm.neograph.core.GraphNode;
 
 public class GraphView {
 	private List<PartShape> nodes;
@@ -61,21 +59,21 @@ public class GraphView {
 		Graph g = new Graph();
 		
 		for(PartShape p : nodes){
-			if( p instanceof FilterNodeView ){
-				FilterNodeView fnv = (FilterNodeView)p;
-				FilterNode f = fnv.getFilter();
+			if( p instanceof GraphNodeView ){
+				GraphNodeView fnv = (GraphNodeView)p;
+				GraphNode f = fnv.getFilter();
 				g.addNode(f);
 			}
 			
 			if( p instanceof ValueNodeView ){
 				ValueNodeView vnw = (ValueNodeView)p;
-				ValueNode v = vnw.getValueNode();
+				GraphNode v = vnw.getValueNode();
 				g.addNode(v);
 			}
 			
-			if( p instanceof ExecutableNodeView ){
-				ExecutableNodeView e = (ExecutableNodeView)p;
-				ExecutableNode en = e.getExecutableNode();
+			if( p instanceof OperationGraphNodeView ){
+				OperationGraphNodeView e = (OperationGraphNodeView)p;
+				GraphNode en = e.getExecutableNode();
 				g.addNode(en);
 			}
 		}

@@ -2,8 +2,6 @@ package com.cfm.imglab.desktop.operators;
 
 import java.awt.Graphics2D;
 
-import com.cfm.imglab.NamedValue;
-import com.cfm.imglab.ValueSet;
 import com.cfm.imglab.desktop.ui.composer.graphic.PartShape;
 
 public class AddImageFilter extends PartShape{

@@ -7,7 +7,8 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
-import com.cfm.imglab.NamedValue;
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.desktop.ImgLabFrame;
 
 
@@ -32,7 +33,7 @@ public class ImageParameterWidget extends ParameterWidget{
 	}
 
 	@Override
-	public void pushValue(NamedValue value) {
+	public void pushValue(RuntimePrimitive value) {
 		super.pushValue(value);
 		btnImg.setText("");
 		btnImg.setIcon(new ImageIcon( value.getAsImage().getImage().getScaledInstance(40, 40, Image.SCALE_FAST)) );

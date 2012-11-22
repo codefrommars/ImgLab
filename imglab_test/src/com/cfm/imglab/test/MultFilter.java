@@ -1,7 +1,7 @@
 package com.cfm.imglab.test;
 
 import com.cfm.imglab.Filter;
-import com.cfm.imglab.NamedValue;
+import com.cfm.imglab.RuntimePrimitive;
 import com.cfm.imglab.ValueSet;
 
 public class MultFilter implements Filter {
@@ -19,15 +19,15 @@ public class MultFilter implements Filter {
 	public ValueSet getParameters() {
 		ValueSet values = new ValueSet();
 
-		values.addValue(new NamedValue(IN_MULT_1, NamedValue.TYPE_NUMBER));
-		values.addValue(new NamedValue(IN_MULT_2, NamedValue.TYPE_NUMBER));
+		values.addValue(new RuntimePrimitive(IN_MULT_1, RuntimePrimitive.TYPE_NUMBER));
+		values.addValue(new RuntimePrimitive(IN_MULT_2, RuntimePrimitive.TYPE_NUMBER));
 
 		return values;
 	}
 
 	@Override
 	public void runFilter(ValueSet input, ValueSet output) {
-		NamedValue mult = new NamedValue(OUT_MULT);
+		RuntimePrimitive mult = new RuntimePrimitive(OUT_MULT);
 
 		double s1 = input.get(IN_MULT_1).getAsNumber();
 		double s2 = input.get(IN_MULT_2).getAsNumber();
@@ -40,7 +40,7 @@ public class MultFilter implements Filter {
 	public ValueSet getOutput() {
 		ValueSet params = new ValueSet();
 		
-		params.addValue(new NamedValue(OUT_MULT, NamedValue.TYPE_NUMBER));		
+		params.addValue(new RuntimePrimitive(OUT_MULT, RuntimePrimitive.TYPE_NUMBER));		
 		
 		return params;
 	}

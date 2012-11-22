@@ -6,26 +6,29 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cfm.imglab.composer.Port;
-import com.cfm.imglab.composer.ValueNode;
+import cfm.neograph.core.GraphNode;
+import cfm.neograph.core.GraphNodeType;
+import cfm.neograph.core.GraphPort;
+
+import com.cfm.imglab.ImageDescriptor;
 
 public class ValueNodeView extends PartShape implements HasOutputPorts{
 	private Rectangle extendedBounds = new Rectangle();
 	private int extendedRadious = 10;
-	private ValueNode node;
+	private GraphNode node;
 	
 	public static final int MIN_WIDTH = 50, MIN_HEIGHT = 50;
 	private List<PortView> outputPorts;
 	
-	public ValueNodeView(ValueNode node) {
+	public ValueNodeView(GraphNode node) {
 		super();
 		outputPorts = new ArrayList<PortView>();
 		this.node = node;
 		bounds.width = MIN_WIDTH;
 		bounds.height = MIN_HEIGHT;
 		
-		for(Port port : node.getOutputs()){
-			PortView pv = new PortView(port);
+		for(GraphPort port : node.getOutPorts()){
+			PortView pv = new PortView(port, false);
 //			pv.setInput(false);
 			outputPorts.add(pv);
 		}
@@ -46,7 +49,7 @@ public class ValueNodeView extends PartShape implements HasOutputPorts{
 	}
 	
 	private void renderValue(Graphics2D g) {
-		if(node.getValue().isImage()){
+		if(node.getValue().getType() == GraphNodeType.Image){
 			renderImageValue(g);
 			return;
 		}
@@ -60,7 +63,7 @@ public class ValueNodeView extends PartShape implements HasOutputPorts{
 	private void renderImageValue(Graphics2D g) {
 		
 		if( node.getValue().hasValue() )
-			g.drawImage(node.getValue().getAsImage().getIcon().getImage(), bounds.x + 5, bounds.y + 5, (int)bounds.getWidth() - 10, (int)bounds.getHeight() - 10, null);
+			g.drawImage(((ImageDescriptor)node.getValue().getValue()).getIcon().getImage(), bounds.x + 5, bounds.y + 5, (int)bounds.getWidth() - 10, (int)bounds.getHeight() - 10, null);
 	}
 
 	private void renderPorts(Graphics2D g, List<PortView> ports, Color c){
@@ -195,7 +198,7 @@ public class ValueNodeView extends PartShape implements HasOutputPorts{
 		return outputPorts;
 	}
 
-	public ValueNode getValueNode() {
+	public GraphNode getValueNode() {
 		return node;
 	}
 	

@@ -1,6 +1,6 @@
 package com.cfm.imglab.test;
 
-import com.cfm.imglab.NamedValue;
+import com.cfm.imglab.RuntimePrimitive;
 import com.cfm.imglab.ValueSet;
 import com.cfm.imglab.composer.Context;
 import com.cfm.imglab.composer.FilterNode;
@@ -21,8 +21,8 @@ public class ProgramTest {
 		Node sum = new FilterNode(new SumFilter());
 		g.addNode(sum);
 		
-		NamedValue valA = new NamedValue("a");
-		NamedValue valB = new NamedValue("b");
+		RuntimePrimitive valA = new RuntimePrimitive("a");
+		RuntimePrimitive valB = new RuntimePrimitive("b");
 		
 		valA.setNumber(2);
 		valB.setNumber(5);
@@ -37,7 +37,7 @@ public class ProgramTest {
 		Node mult = new FilterNode(new MultFilter());
 		g.addNode(mult);
 		
-		NamedValue valC = new NamedValue("c");
+		RuntimePrimitive valC = new RuntimePrimitive("c");
 		valC.setNumber(3);
 		
 		ValueNode c = new ValueNode(valC);

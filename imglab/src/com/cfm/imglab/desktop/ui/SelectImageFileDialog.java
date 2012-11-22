@@ -9,8 +9,9 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
 
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.ImageDescriptor;
-import com.cfm.imglab.NamedValue;
 import com.cfm.imglab.desktop.ImgLabFrame;
 
 @SuppressWarnings("serial")
@@ -52,7 +53,7 @@ public class SelectImageFileDialog extends JDialog {
 				public void actionPerformed(ActionEvent e) {
 					ImageDescriptor img = imgList.getSelected();
 					
-					NamedValue val = new NamedValue(img.getName());
+					RuntimePrimitive val = new RuntimePrimitive(img.getName());
 					val.setImage(img);
 					
 					caller.pushValue(val);

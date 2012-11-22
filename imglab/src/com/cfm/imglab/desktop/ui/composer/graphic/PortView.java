@@ -3,18 +3,19 @@ package com.cfm.imglab.desktop.ui.composer.graphic;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import com.cfm.imglab.composer.InputPort;
-import com.cfm.imglab.composer.Port;
+import cfm.neograph.core.GraphPort;
 
 public class PortView extends PartShape {
 	
-	private Port port;
+	private GraphPort port;
+	private boolean isInput;
 	
 	public static final int MIN_WIDTH = 20, MIN_HEIGHT = 12;
 	
-	public PortView(Port port){
+	public PortView(GraphPort port, boolean isInput){
 		super();
 		this.port = port;
+		this.isInput = isInput;
 		bounds.width = MIN_WIDTH;
 		bounds.height = MIN_HEIGHT;
 	}
@@ -24,17 +25,17 @@ public class PortView extends PartShape {
 		return contains(x, y);
 	}
 
-	public boolean isInput() {
-		return port instanceof InputPort;
+	public GraphPort getPort() {
+		return port;
 	}
 
-	public Port getPort() {
-		return port;
+	public boolean isInput() {
+		return isInput;
 	}
 
 	@Override
 	public void paint(Graphics2D g) {
-		if( isInput() )
+		if( isInput )
 			g.setColor(Color.yellow);
 		else
 			g.setColor(Color.red);
@@ -43,7 +44,7 @@ public class PortView extends PartShape {
 		g.setColor(Color.black);
 		g.draw(getBounds());
 		
-		g.drawString("[" + port.getValue().getName() + "]", getX(), getY());
+		g.drawString("[" + port.getLabel() + "]", getX(), getY());
 	}
 	
 }

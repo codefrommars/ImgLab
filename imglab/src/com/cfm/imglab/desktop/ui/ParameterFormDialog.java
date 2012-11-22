@@ -1,18 +1,23 @@
 package com.cfm.imglab.desktop.ui;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 import javax.swing.SpringLayout;
 
-import com.cfm.imglab.NamedValue;
-import com.cfm.imglab.ValueSet;
+import cfm.neograph.core.ValueSet;
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.desktop.ImgLabFrame;
 
 @SuppressWarnings("serial")
@@ -33,7 +38,7 @@ public class ParameterFormDialog extends JDialog{
 		
 		widgets = new HashMap<String, ParameterWidget>();
 		
-		for(NamedValue p : arguments.values()){
+		for(RuntimePrimitive p : arguments.values()){
 			ParameterWidget w = factory.createFrom(p);
 			
 			w.addPropertyChangeListener("value", new PropertyChangeListener() {
@@ -86,6 +91,15 @@ public class ParameterFormDialog extends JDialog{
 		
 		add(buttonsPanel, BorderLayout.SOUTH);
 		
+		getRootPane().setDefaultButton(btnAccept);
+		getRootPane().registerKeyboardAction(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				btnCancel.doClick();
+			}
+			
+		}, KeyStroke.getKeyStroke("ESCAPE"), JComponent.WHEN_IN_FOCUSED_WINDOW);
 		pack();
 	}
 	
@@ -93,7 +107,7 @@ public class ParameterFormDialog extends JDialog{
 		ValueSet params = new ValueSet();
 		
 		for(String s : widgets.keySet()){
-			NamedValue v = widgets.get(s).pullValue();
+			RuntimePrimitive v = widgets.get(s).pullValue();
 			params.put(s, v);
 		}
 		

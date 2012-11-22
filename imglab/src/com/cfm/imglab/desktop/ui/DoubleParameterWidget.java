@@ -4,7 +4,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JTextField;
 
-import com.cfm.imglab.NamedValue;
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.desktop.ImgLabFrame;
 
 
@@ -17,7 +18,7 @@ public class DoubleParameterWidget extends ParameterWidget{
 		super(name, frame);
 		setLayout(new BorderLayout());
 		
-		value = new NamedValue(getName());
+		value = new RuntimePrimitive(getName());
 		
 		txtValue = new JTextField();		
 		add(txtValue, BorderLayout.CENTER);
@@ -25,7 +26,7 @@ public class DoubleParameterWidget extends ParameterWidget{
 	}
 
 	@Override
-	public void pushValue(NamedValue value) {
+	public void pushValue(RuntimePrimitive value) {
 		super.pushValue(value);
 		txtValue.setText(String.valueOf(value.getAsNumber()));
 		revalidate();
@@ -33,7 +34,7 @@ public class DoubleParameterWidget extends ParameterWidget{
 	}
 
 	@Override
-	public NamedValue pullValue() {
+	public RuntimePrimitive pullValue() {
 		double val = 0;
 		
 		if( !txtValue.getText().isEmpty() )

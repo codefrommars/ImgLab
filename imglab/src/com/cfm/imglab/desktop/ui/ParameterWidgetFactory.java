@@ -1,6 +1,7 @@
 package com.cfm.imglab.desktop.ui;
 
-import com.cfm.imglab.NamedValue;
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.desktop.ImgLabFrame;
 
 public class ParameterWidgetFactory {
@@ -11,7 +12,7 @@ public class ParameterWidgetFactory {
 		this.frame = frame;
 	}
 	
-	public ParameterWidget createFrom(NamedValue param){
+	public ParameterWidget createFrom(RuntimePrimitive param){
 		
 		ParameterWidget w = null;
 		

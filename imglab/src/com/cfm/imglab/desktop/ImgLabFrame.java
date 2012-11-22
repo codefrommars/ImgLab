@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Vector;
 
-import javax.swing.ButtonGroup;
 import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
@@ -21,47 +20,49 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
-import javax.swing.JToggleButton;
 
-import com.cfm.imglab.Filter;
+import cfm.neograph.Evaluator;
+import cfm.neograph.core.Graph;
+import cfm.neograph.core.GraphNodeType;
+import cfm.neograph.core.Operation;
+import cfm.neograph.core.OperationRegister;
+
 import com.cfm.imglab.ImageDescriptor;
-import com.cfm.imglab.NamedValue;
-import com.cfm.imglab.ValueSet;
-import com.cfm.imglab.composer.Context;
-import com.cfm.imglab.composer.Graph;
-import com.cfm.imglab.composer.Program;
 import com.cfm.imglab.desktop.actions.ExitAction;
 import com.cfm.imglab.desktop.actions.LoadAction;
-import com.cfm.imglab.desktop.actions.RunFilterAction;
+import com.cfm.imglab.desktop.actions.LoadComposedAction;
+import com.cfm.imglab.desktop.actions.RunOperationAction;
 import com.cfm.imglab.desktop.actions.SaveAction;
 import com.cfm.imglab.desktop.actions.SaveComposedAction;
+import com.cfm.imglab.desktop.operators.AddImageOperation;
 import com.cfm.imglab.desktop.ui.ImageComponent;
 import com.cfm.imglab.desktop.ui.ImageTable;
 import com.cfm.imglab.desktop.ui.composer.ElementTransferHandler;
-import com.cfm.imglab.desktop.ui.composer.GraphEditor;
-import com.cfm.imglab.filters.ANDFilter;
-import com.cfm.imglab.filters.BlendingFilter;
-import com.cfm.imglab.filters.MinusFilter;
-import com.cfm.imglab.filters.MirrorOperator;
-import com.cfm.imglab.filters.MultiplyFilter;
-import com.cfm.imglab.filters.ORFilter;
-import com.cfm.imglab.filters.PlusFilter;
-import com.cfm.imglab.filters.RGBtoGrayFilter;
-import com.cfm.imglab.filters.RotateOperator;
-import com.cfm.imglab.filters.XORFilter;
-import com.cfm.imglab.filters.ZoomOperator;
+import com.cfm.imglab.desktop.ui.composer.NeoGraphEditor;
+import com.cfm.imglab.operations.ANDOperation;
+import com.cfm.imglab.operations.BlendingOperation;
+import com.cfm.imglab.operations.MinusOperation;
+import com.cfm.imglab.operations.MirrorOperation;
+import com.cfm.imglab.operations.MultiplyOperation;
+import com.cfm.imglab.operations.OROperation;
+import com.cfm.imglab.operations.PlusOperation;
+import com.cfm.imglab.operations.RGBtoGrayOperation;
+import com.cfm.imglab.operations.RotateOperation;
+import com.cfm.imglab.operations.XOROperation;
+import com.cfm.imglab.operations.ZoomOperation;
 
 @SuppressWarnings("serial")
 public class ImgLabFrame extends JFrame {
 	
 	private ImageTable table;
 	private JDesktopPane desktop;
-	private Vector<Filter> supportedFilters;
-	private GraphEditor graphEditor;
+	private OperationRegister supportedOperations;
+	private Vector<GraphNodeType> supportedVariables;
+	private NeoGraphEditor graphEditor;
 		
 	public ImgLabFrame(){
 		super("ImgLab");
-		initFilters();
+		initOperations();
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setPreferredSize(new Dimension(1280, 720));
@@ -78,15 +79,18 @@ public class ImgLabFrame extends JFrame {
 		tableFrame.setLocation(700, 0);
 		add(tableFrame);
 		
-		createFiltersList();
+		createOperationsList();
+		createVariablesList();
 		showGraphEditor();
 		setupMenu();
 	}
 	
 	private void showGraphEditor() {
 		
-		if( graphEditor == null )
-			graphEditor = new GraphEditor(this);
+		if( graphEditor == null ){
+			graphEditor = new NeoGraphEditor(this);
+			graphEditor.edit(new Graph());
+		}
 		
 		JPanel p = new JPanel();
 		p.setLayout(new BorderLayout());
@@ -99,38 +103,42 @@ public class ImgLabFrame extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Graph g = graphEditor.getGraph();
+				Evaluator evaluator = new Evaluator();
+				evaluator.execute(g);
 				
-				Context c = new Context(g);
-				Program p = g.compile();
-				ValueSet v = c.runProgram(p);
-				
-				for(NamedValue value : v.values()){
-					if( value.isImage() ){
-						showImage(value.getAsImage().getImage());
-						addImage(value.getAsImage().getImage(), value.getName());
-					}
-				}
+//				Graph g = graphEditor.getGraph();
+//				
+//				Context c = new Context(g);
+//				Program p = g.compile();
+//				ValueSet v = c.runProgram(p);
+//				
+//				for(RuntimePrimitive value : v.values()){
+//					if( value.isImage() ){
+//						showImage(value.getAsImage().getImage());
+//						addImage(value.getAsImage().getImage(), value.getName());
+//					}
+//				}
 			}
 		});
 		bar.add(btnPlay);
 		
 		
-		String[] titles = {"Mouse", "Image", "Number", "String", "Boolean", "Preview"};
-		JToggleButton btnTools[] = new JToggleButton[titles.length];
-		
-		ButtonGroup group = new ButtonGroup();
-		for(int i = 0; i < btnTools.length; i++){
-			btnTools[i] = new JToggleButton(titles[i]);
-			group.add(btnTools[i]);
-			bar.add(btnTools[i]);
-			final int tool = i;
-			btnTools[i].addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					graphEditor.setTool(tool);
-				}
-			});
-		}
+//		String[] titles = {"Mouse", "Image", "Number", "String", "Boolean", "Preview"};
+//		JToggleButton btnTools[] = new JToggleButton[titles.length];
+//		
+//		ButtonGroup group = new ButtonGroup();
+//		for(int i = 0; i < btnTools.length; i++){
+//			btnTools[i] = new JToggleButton(titles[i]);
+//			group.add(btnTools[i]);
+//			bar.add(btnTools[i]);
+//			final int tool = i;
+//			btnTools[i].addActionListener(new ActionListener() {
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					//graphEditor.setTool(tool);
+//				}
+//			});
+//		}
 		
 		p.add(bar, BorderLayout.NORTH);
 		p.add(graphEditor, BorderLayout.CENTER);
@@ -143,36 +151,57 @@ public class ImgLabFrame extends JFrame {
 		add(graphEditorFrame);
 	}
 
-	private void createFiltersList(){
-		JList<Filter> list = new JList<Filter>(supportedFilters);
+	private void createOperationsList(){
+		JList<Operation> list = new JList<Operation>(supportedOperations.getRegisteredOperations());
 		list.setDragEnabled(true);
 		list.setDropMode(DropMode.INSERT);
 		list.setTransferHandler(new ElementTransferHandler(ElementTransferHandler.TYPE_FILTER));
 		
-		JInternalFrame filtersFrame = new JInternalFrame("FiltersList", true, false, true, true);
-		filtersFrame.setVisible(true);
-		filtersFrame.add(list);
-		filtersFrame.pack();
-		filtersFrame.setSize(140, filtersFrame.getHeight());
-		filtersFrame.setLocation(0, 0);
-		add(filtersFrame);
+		JInternalFrame opFrame = new JInternalFrame("OperationsList", true, false, true, true);
+		opFrame.setVisible(true);
+		opFrame.add(list);
+		opFrame.pack();
+		opFrame.setSize(140, opFrame.getHeight());
+		opFrame.setLocation(0, 150);
+		add(opFrame);
+	}
+	
+	private void createVariablesList(){
+		
+		supportedVariables = new Vector<GraphNodeType>();
+		supportedVariables.add(GraphNodeType.Boolean);
+		supportedVariables.add(GraphNodeType.Number);
+		supportedVariables.add(GraphNodeType.String);
+		
+		JList<GraphNodeType> list = new JList<GraphNodeType>(supportedVariables);
+		list.setDragEnabled(true);
+		list.setDropMode(DropMode.INSERT);
+		list.setTransferHandler(new ElementTransferHandler(ElementTransferHandler.TYPE_VARIABLE));
+		
+		JInternalFrame varFrame = new JInternalFrame("Variables", true, false, true, true);
+		varFrame.setVisible(true);
+		varFrame.add(list);
+		varFrame.pack();
+		varFrame.setSize(140, varFrame.getHeight());
+		varFrame.setLocation(0, 0);
+		add(varFrame);
 	}
 	
 	
-	private void initFilters() {
-		supportedFilters = new Vector<Filter>();
-		supportedFilters.add( new ANDFilter() );
-		supportedFilters.add( new BlendingFilter() );
-		supportedFilters.add( new MinusFilter() );
-		supportedFilters.add( new MirrorOperator() );
-		supportedFilters.add( new MultiplyFilter() );
-		supportedFilters.add( new ORFilter() );
-		supportedFilters.add( new PlusFilter() );
-		supportedFilters.add( new RGBtoGrayFilter() );
-		supportedFilters.add( new RotateOperator() );
-		supportedFilters.add( new XORFilter() );
-		supportedFilters.add( new ZoomOperator() );
-		
+	private void initOperations() {
+		supportedOperations = new OperationRegister();
+		supportedOperations.registerOperation( new ANDOperation() );
+		supportedOperations.registerOperation( new BlendingOperation() );
+		supportedOperations.registerOperation( new MinusOperation() );
+		supportedOperations.registerOperation( new MirrorOperation() );
+		supportedOperations.registerOperation( new MultiplyOperation() );
+		supportedOperations.registerOperation( new OROperation() );
+		supportedOperations.registerOperation( new PlusOperation() );
+		supportedOperations.registerOperation( new RGBtoGrayOperation() );
+		supportedOperations.registerOperation( new RotateOperation() );
+		supportedOperations.registerOperation( new XOROperation() );
+		supportedOperations.registerOperation( new ZoomOperation() );
+		supportedOperations.registerOperation( new AddImageOperation(this) );
 	}
 
 	private void setupMenu(){
@@ -189,21 +218,24 @@ public class ImgLabFrame extends JFrame {
 	        
 	        file.add(new JSeparator());
 	        
+	        JMenuItem loadComposed = new JMenuItem(new LoadComposedAction(this));
+	        file.add(loadComposed);
+	        
 	        JMenuItem saveComposed = new JMenuItem(new SaveComposedAction(this));
 	        file.add(saveComposed);
 	        
 	        JMenuItem exit = new JMenuItem(new ExitAction(this));
 	        file.add(exit);
 	        
-	        JMenu filters = new JMenu("Filter");
+	        JMenu Operations = new JMenu("Operation");
 			
-			for(Filter filter : supportedFilters ){
-				JMenuItem menuItemFilter = new JMenuItem(new RunFilterAction(this, filter));
-				filters.add(menuItemFilter);
+			for(Operation Operation : supportedOperations.getRegisteredOperations() ){
+				JMenuItem menuItemOperation = new JMenuItem(new RunOperationAction(this, Operation));
+				Operations.add(menuItemOperation);
 			}
 			
 		
-		menuBar.add(filters);
+		menuBar.add(Operations);
 		
 		this.setJMenuBar(menuBar);
 	}
@@ -234,6 +266,11 @@ public class ImgLabFrame extends JFrame {
 	}
 	
 	public void saveEditedGraph(File file) throws IOException{
-		graphEditor.save(file);
+		//graphEditor.save(file);
+		graphEditor.save(file, supportedOperations);
+	}
+
+	public void loadGraph(File f) {
+		graphEditor.loadGraph(f, supportedOperations);
 	}
 }

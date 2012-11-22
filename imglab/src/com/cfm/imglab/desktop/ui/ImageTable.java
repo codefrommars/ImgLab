@@ -27,9 +27,11 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import cfm.neograph.core.ValueSet;
+import cfm.neograph.core.type.RuntimePrimitive;
+import cfm.neograph.core.type.RuntimeType;
+
 import com.cfm.imglab.ImageDescriptor;
-import com.cfm.imglab.NamedValue;
-import com.cfm.imglab.ValueSet;
 import com.cfm.imglab.desktop.ImgLabFrame;
 import com.cfm.imglab.desktop.ui.composer.ElementTransferHandler;
 
@@ -171,7 +173,7 @@ public class ImageTable extends JScrollPane{
 					
 //					NamedValue[] params = { new NamedValue(FILE_NAME) };
 					ValueSet params = new ValueSet();
-					params.put(FILE_NAME, new NamedValue(FILE_NAME, NamedValue.TYPE_STRING));
+					params.put(FILE_NAME, new RuntimePrimitive(FILE_NAME, RuntimeType.TYPE_STRING));
 					
 					final  ParameterFormDialog dialog = new ParameterFormDialog(frame, params);
 					
@@ -185,7 +187,7 @@ public class ImageTable extends JScrollPane{
 					dialog.getBtnAccept().addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
-							HashMap<String, NamedValue> params = dialog.getParameters();
+							HashMap<String, RuntimePrimitive> params = dialog.getParameters();
 							String str = (params.get(FILE_NAME)).getAsString();
 							
 							ImageDescriptor imgFile = new ImageDescriptor(bi, str);

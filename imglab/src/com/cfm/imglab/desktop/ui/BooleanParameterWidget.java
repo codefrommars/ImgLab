@@ -4,7 +4,8 @@ import java.awt.BorderLayout;
 
 import javax.swing.JCheckBox;
 
-import com.cfm.imglab.NamedValue;
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.desktop.ImgLabFrame;
 
 
@@ -18,7 +19,7 @@ public class BooleanParameterWidget extends ParameterWidget{
 		super(name, frame);
 		setLayout(new BorderLayout());
 		
-		value = new NamedValue(getName());
+		value = new RuntimePrimitive(getName());
 		
 		//txtValue = new JTextField();
 		chkValue = new JCheckBox();
@@ -27,7 +28,7 @@ public class BooleanParameterWidget extends ParameterWidget{
 	}
 
 	@Override
-	public void pushValue(NamedValue value) {
+	public void pushValue(RuntimePrimitive value) {
 		super.pushValue(value);
 		
 		chkValue.setText(String.valueOf(value.getName()));
@@ -38,7 +39,7 @@ public class BooleanParameterWidget extends ParameterWidget{
 	}
 
 	@Override
-	public NamedValue pullValue() {
+	public RuntimePrimitive pullValue() {
 		boolean val = chkValue.isSelected();
 		value.setBoolean(val);
 		return value;

@@ -55,7 +55,7 @@ public class SelectionHelper {
 		Cursor.SE_RESIZE_CURSOR
 	};
 	
-	public static int getContaintmentFor(FilterNodeView node, int x, int y){
+	public static int getContaintmentFor(GraphNodeView node, int x, int y){
 		for(int i = 0; i < helperPositons.length; i++){
 			positionHelper(node.getBounds(), helperPositons[i]);
 			if( selHelper.contains(x, y) )
@@ -65,7 +65,7 @@ public class SelectionHelper {
 		return -1;
 	}
 	
-	public static void renderFor(FilterNodeView node, Graphics2D g, Color color){
+	public static void renderFor(GraphNodeView node, Graphics2D g, Color color){
 		g.setColor(color);
 		
 		for(float[] helperPos : helperPositons){

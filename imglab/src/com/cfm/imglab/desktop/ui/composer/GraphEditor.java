@@ -26,25 +26,25 @@ import java.util.TooManyListenersException;
 
 import javax.swing.JComponent;
 
-import com.cfm.imglab.Filter;
+import cfm.neograph.core.Graph;
+import cfm.neograph.core.GraphNode;
+import cfm.neograph.core.GraphNodeFactory;
+import cfm.neograph.core.GraphNodeType;
+import cfm.neograph.core.NodeValue;
+import cfm.neograph.core.Operation;
+import cfm.neograph.core.ValueSet;
+import cfm.neograph.core.type.RuntimePrimitive;
+
 import com.cfm.imglab.ImageDescriptor;
-import com.cfm.imglab.NamedValue;
-import com.cfm.imglab.ValueSet;
-import com.cfm.imglab.composer.ExecutableNode;
-import com.cfm.imglab.composer.FilterNode;
-import com.cfm.imglab.composer.Graph;
-import com.cfm.imglab.composer.ValueNode;
 import com.cfm.imglab.desktop.ImgLabFrame;
 import com.cfm.imglab.desktop.ui.ParameterFormDialog;
-import com.cfm.imglab.desktop.ui.composer.graphic.ExecutableNodeView;
-import com.cfm.imglab.desktop.ui.composer.graphic.FilterNodeView;
 import com.cfm.imglab.desktop.ui.composer.graphic.GraphView;
 import com.cfm.imglab.desktop.ui.composer.graphic.HasInputPorts;
 import com.cfm.imglab.desktop.ui.composer.graphic.HasOutputPorts;
 import com.cfm.imglab.desktop.ui.composer.graphic.LinkView;
+import com.cfm.imglab.desktop.ui.composer.graphic.OperationGraphNodeView;
 import com.cfm.imglab.desktop.ui.composer.graphic.PartShape;
 import com.cfm.imglab.desktop.ui.composer.graphic.PortView;
-import com.cfm.imglab.desktop.ui.composer.graphic.PreviewImageNode;
 import com.cfm.imglab.desktop.ui.composer.graphic.SelectionHelper;
 import com.cfm.imglab.desktop.ui.composer.graphic.ValueNodeView;
 import com.google.gson.Gson;
@@ -58,6 +58,7 @@ public class GraphEditor extends JComponent {
 	private PartShape hoverNode;
 	private PortView hoverPort;
 	private LinkView tempLink;
+	private Graph graph;
 	
 	private int tool;
 	
@@ -81,6 +82,8 @@ public class GraphEditor extends JComponent {
 		setPreferredSize(new Dimension(500, 500));
 		setFocusable(true);
 		
+		graph = new Graph();
+		
 		graphView = new GraphView();
 		
 		DropTarget dt = new DropTarget();
@@ -94,13 +97,13 @@ public class GraphEditor extends JComponent {
 						Transferable t = dtde.getTransferable();
 						
 						if( t.isDataFlavorSupported(ElementTransferHandler.FLAVORS[ElementTransferHandler.TYPE_FILTER])){
-							onDropFilter((Filter)t.getTransferData(ElementTransferHandler.FLAVORS[ElementTransferHandler.TYPE_FILTER]), dtde.getLocation());
+							onDropOperation((Operation)t.getTransferData(ElementTransferHandler.FLAVORS[ElementTransferHandler.TYPE_FILTER]), dtde.getLocation());
 						}
 						
 						if( t.isDataFlavorSupported(ElementTransferHandler.FLAVORS[ElementTransferHandler.TYPE_IMAGE])){
 							onDropImage((ImageDescriptor)t.getTransferData(ElementTransferHandler.FLAVORS[ElementTransferHandler.TYPE_IMAGE]), dtde.getLocation());
 						}
-						//onDropFilter((Filter)dtde.getTransferable().getTransferData(ElementTransferHandler.DATA_FLAVOUR), dtde.getLocation());
+						//onDropOperation((Operation)dtde.getTransferable().getTransferData(ElementTransferHandler.DATA_FLAVOUR), dtde.getLocation());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -148,7 +151,7 @@ public class GraphEditor extends JComponent {
 					if( tempLink == null ){
 						tempLink = new LinkView();
 						tempLink.setSource(hoverPort);
-						tempLink.setTarget(new PortView(null));
+						tempLink.setTarget(new PortView(null, true));
 					}
 					dragPort(evt.getX(), evt.getY());
 				}
@@ -223,7 +226,7 @@ public class GraphEditor extends JComponent {
 		
 		ValueNodeView vnw = (ValueNodeView)p;
 		
-		final NamedValue value = vnw.getValueNode().getValue();
+		final RuntimePrimitive value = new RuntimePrimitive(vnw.getValueNode().getValue());
 		
 		ValueSet vs = new ValueSet();
 		vs.addValue(value);
@@ -241,7 +244,7 @@ public class GraphEditor extends JComponent {
 		dialog.getBtnAccept().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				NamedValue val = dialog.getParameters().get(value.getName());
+				RuntimePrimitive val = dialog.getParameters().get(value.getName());
 				value.setValue(val);
 				dialog.dispose();
 				repaint();
@@ -275,18 +278,41 @@ public class GraphEditor extends JComponent {
 		if( nodeAtPos )
 			return;
 		
-		NamedValue val = new NamedValue("var", tool);
+		//RuntimePrimitive val = new RuntimePrimitive("var");
+		NodeValue val = new NodeValue();
+		
+		switch(tool){
+			case TOOL_BOOLEAN:
+				val.setValue(true);
+				val.setType(GraphNodeType.Boolean);
+				return;
+				
+			case TOOL_IMAGE:
+				val.setType(GraphNodeType.Image);
+				val.setValue(null);
+				return;
+				
+			case TOOL_NUMBER:
+				val.setType(GraphNodeType.Number);
+				val.setValue(0d);
+				return;
+				
+			case TOOL_STRING:
+				val.setType(GraphNodeType.String);
+				val.setValue("");
+				return;				
+		}
 		addNamedValue(val, new Point(x, y));
 		
 	}
 
 	private void addPreviewImageNode(int x, int y) {
-		PreviewImageNode node = new PreviewImageNode(frame);
-		
-		ExecutableNodeView view = new ExecutableNodeView(node);
-		view.setPosition(x, y);
-		
-		graphView.addNode(view);
+//		PreviewImageNode node = new PreviewImageNode(frame);
+//		
+//		OperationGraphNodeView view = new OperationGraphNodeView(node);
+//		view.setPosition(x, y);
+//		
+//		graphView.addNode(view);
 		//nodes.add(view);
 	}
 
@@ -317,7 +343,7 @@ public class GraphEditor extends JComponent {
 		tempLink.setColor(Color.red);
 		
 		if( (shape instanceof HasInputPorts) ||  (shape instanceof HasOutputPorts) ){
-			//FilterNodeView n = (FilterNodeView)shape;
+			//OperationNodeView n = (OperationNodeView)shape;
 			
 			if( shape != null ){
 				PortView p = getPortAt(shape, x, y);
@@ -358,8 +384,13 @@ public class GraphEditor extends JComponent {
 		repaint();
 	}
 
-	public void onDropFilter(Filter model, Point location){
-		FilterNodeView n = new FilterNodeView(new FilterNode(model));
+	public void onDropOperation(Operation model, Point location){
+		
+		GraphNodeFactory f = new GraphNodeFactory();
+		GraphNode node = f.newOperationNode(model);
+		graph.addNode(node);
+		
+		OperationGraphNodeView n = new OperationGraphNodeView(node);
 		n.setPosition(location.x, location.y);
 		//nodes.add(n);
 		graphView.addNode(n);
@@ -369,18 +400,21 @@ public class GraphEditor extends JComponent {
 	public void onDropImage(ImageDescriptor img, Point location){
 		//System.out.println("Added image: " + img.getName());
 		
-		NamedValue imgVal = new NamedValue("Image");
-		imgVal.setImage(img);
+//		RuntimePrimitive imgVal = new RuntimePrimitive("Image");
+//		imgVal.setImage(img);
 		
-		ValueNodeView n = new ValueNodeView(new ValueNode(imgVal));
+		GraphNodeFactory f = new GraphNodeFactory();		
+		ValueNodeView n = new ValueNodeView(f.newImageNode(img));
 		n.setPosition(location.x, location.y);
 		//nodes.add(n);
 		graphView.addNode(n);
 		repaint();
 	}
 	
-	public void addNamedValue(NamedValue val, Point location){
-		ValueNodeView n = new ValueNodeView( new ValueNode(val) );
+	public void addNamedValue(NodeValue val, Point location){
+		
+		GraphNodeFactory f = new GraphNodeFactory();
+		ValueNodeView n = new ValueNodeView(f.newNodeValue(val) );
 		n.setPosition(location.x, location.y);
 		//nodes.add(n);
 		graphView.addNode(n);
