@@ -65,7 +65,7 @@ public class Evaluator {
 		}
 		
 //		System.out.println(graph);
-//		System.out.println(program);
+		System.out.println(program);
 		
 		return program;
 	}

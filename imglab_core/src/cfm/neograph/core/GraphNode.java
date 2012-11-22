@@ -12,7 +12,7 @@ public class GraphNode {
 	private ArrayList<GraphPort> inPorts, outPorts;
 	private NodeValue value;
 	
-	public static final int MIN_WIDTH = 50, MIN_HEIGHT = 25, PORT_SEP = 10, VAR_WIDTH = 25, VAR_HEIGHT = 25;
+	public static final int MIN_WIDTH = 50, MIN_HEIGHT = 50, PORT_SEP = 10, VAR_WIDTH = 50, VAR_HEIGHT = 50;
 	protected Rectangle bounds = new Rectangle();
 	
 	
@@ -148,7 +148,8 @@ public class GraphNode {
 	}
 	
 	private void resize(){
-		int width = MIN_WIDTH;
+		int width = isValueNode() ? VAR_WIDTH : MIN_WIDTH;
+		int maxHeight = isValueNode() ? VAR_HEIGHT : MIN_HEIGHT;
 		
 		int maxPorts = getInPorts().size();
 		if( getOutPorts().size() > maxPorts )
@@ -156,7 +157,7 @@ public class GraphNode {
 		
 		int height = (GraphPort.portHeight + PORT_SEP) * maxPorts + PORT_SEP;
 		
-		height = Math.max(height, MIN_HEIGHT);
+		height = Math.max(height, maxHeight);
 		
 		bounds = new Rectangle(0, 0, width, height);
 		
