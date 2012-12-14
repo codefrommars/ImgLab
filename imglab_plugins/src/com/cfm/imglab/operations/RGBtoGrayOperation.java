@@ -8,7 +8,7 @@ import com.cfm.imglab.ImageDescriptor;
 import com.cfm.imglab.ImageUtils;
 
 public class RGBtoGrayOperation extends UnaryOperation{
-	public static final String INPUT_IMAGE = "Input Image";
+	//public static final String INPUT_IMAGE = "Input Image";
 
 	@Override
 	public String getName() {

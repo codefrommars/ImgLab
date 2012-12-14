@@ -75,8 +75,6 @@ public class NeoGraphRenderer {
 		// Render Ports
 		renderPorts(n.getInPorts(), Color.yellow, g);
 		renderPorts(n.getOutPorts(), Color.red, g);
-		// renderPorts(n, n.getOutPorts(), n.getX() + n.getWidth() -
-		// halfPortWidth, Color.red, g);
 	}
 
 	private void renderPorts(List<GraphPort> ports, Color color, Graphics2D g) {
@@ -88,6 +86,7 @@ public class NeoGraphRenderer {
 			g.setColor(Color.black);
 			g.draw(p.getBounds());
 			
+//			g.drawString(""+p.getIndex() + " " + p.getLabel(), p.getX() - 10, p.getY());
 			g.drawString(p.getLabel(), p.getX() - 10, p.getY());
 		}
 

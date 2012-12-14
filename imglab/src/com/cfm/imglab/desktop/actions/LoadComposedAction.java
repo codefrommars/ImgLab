@@ -43,7 +43,7 @@ public class LoadComposedAction extends AbstractAction {
 			
 		});
 		
-		if( fileChooser.showSaveDialog(frame) != JFileChooser.APPROVE_OPTION )
+		if( fileChooser.showOpenDialog(frame) != JFileChooser.APPROVE_OPTION )
 			return;
 		
 		File f = fileChooser.getSelectedFile(); 

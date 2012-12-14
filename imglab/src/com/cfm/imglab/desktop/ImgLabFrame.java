@@ -41,6 +41,10 @@ import com.cfm.imglab.desktop.ui.composer.ElementTransferHandler;
 import com.cfm.imglab.desktop.ui.composer.NeoGraphEditor;
 import com.cfm.imglab.operations.ANDOperation;
 import com.cfm.imglab.operations.BlendingOperation;
+import com.cfm.imglab.operations.ContourDetectOperation;
+import com.cfm.imglab.operations.GaussianBlurOperation;
+import com.cfm.imglab.operations.KMeansClusterOperation;
+import com.cfm.imglab.operations.MakeMaskOperation;
 import com.cfm.imglab.operations.MinusOperation;
 import com.cfm.imglab.operations.MirrorOperation;
 import com.cfm.imglab.operations.MultiplyOperation;
@@ -202,6 +206,11 @@ public class ImgLabFrame extends JFrame {
 		supportedOperations.registerOperation( new XOROperation() );
 		supportedOperations.registerOperation( new ZoomOperation() );
 		supportedOperations.registerOperation( new AddImageOperation(this) );
+		supportedOperations.registerOperation( new KMeansClusterOperation() );
+		supportedOperations.registerOperation( new GaussianBlurOperation());
+		supportedOperations.registerOperation( new ContourDetectOperation() );
+		supportedOperations.registerOperation( new MakeMaskOperation());
+		
 	}
 
 	private void setupMenu(){
