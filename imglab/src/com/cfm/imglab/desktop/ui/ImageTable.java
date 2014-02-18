@@ -9,6 +9,8 @@ import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -226,9 +228,29 @@ public class ImageTable extends JScrollPane{
 			}
 		});
 		
+		table.addKeyListener(new KeyAdapter() {
+
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if( e.getKeyCode() == KeyEvent.VK_DELETE ){
+					int row = table.getSelectedRow();
+					removeImage(row);
+				}
+				
+				super.keyPressed(e);
+			}
+			
+		});
+		
 		table.setDragEnabled(true);
 		table.setTransferHandler(new ElementTransferHandler(ElementTransferHandler.TYPE_IMAGE));
 		
+	}
+	
+	
+	public void removeImage(int row){
+		model.data.remove(row);
+		model.fireTableDataChanged();
 	}
 	
 	public void addImage(ImageDescriptor img){
